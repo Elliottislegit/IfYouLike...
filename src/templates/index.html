@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>If You Like...</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div id="header-img">
+            
+            <a href="http://127.0.0.1:5000/"><img src="{{ url_for('static', filename='images/ifyoulikeit.gif') }}" alt="Logo" class="logo"></a>
+
+        </div>
+        
+        <div id="searchBar">
+            <form id="search">			
+                    <input type="text" placeholder="Search...">
+            </form>  		
+        </div>
+
+    <!-- Content will go here -->
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

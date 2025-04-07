@@ -1,13 +1,25 @@
-from dotenv import load_dotenv
+from flask import Flask, render_template, request, jsonify
 import os
+from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
-# Access your API keys
-spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
-spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-tmdb_api_key = os.getenv("TMDB_API_KEY")
-tmdb_token = os.getenv("TMDB_READ_ACCESS_TOKEN")
+# Create Flask app with correct static and template folders
+app = Flask(__name__, static_folder='static', template_folder='templates')
 
-# Now you can use these variables safely in your API calls
+# Store credentials safely
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/search', methods=['POST'])
+def search():
+    # Basic search functionality will go here
+    return jsonify({"status": "success"})
+
+if __name__ == '__main__':
+    app.run(debug=True)

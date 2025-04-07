@@ -1,0 +1,28 @@
+
+#header-img {
+    padding-left: 80px;
+    padding-top: 20px;
+}
+
+#searchBar {
+
+        
+        text-align: center;
+
+}
+
+
+body {
+    background-color: rgb(54, 49, 49);
+  }
+  h1 {
+    font-family: 'Raleway', sans-serif;
+    color: rgb(255, 255, 255);
+    text-align: left;
+    padding-left: 60px;
+    padding-top: 30px;
+  }
+  h4 {
+    font-family: verdana;
+    text-align: center;
+  }
