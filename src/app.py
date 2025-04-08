@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+import json
 import os
 from dotenv import load_dotenv
+from flask import Flask, render_template, request, jsonify
 
-# Load environment variables
+# Load environment variables / obscuring sensitive data
 load_dotenv()
 
 # Create Flask app with correct static and template folders
@@ -11,6 +12,7 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 # Store credentials safely
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+
 
 @app.route('/')
 def index():

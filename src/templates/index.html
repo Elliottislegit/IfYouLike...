@@ -3,16 +3,16 @@
 <head>
     <title>If You Like...</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
     <header>
-        <div id="header-img">           
-            <a href="http://127.0.0.1:5000/"><img src="{{ url_for('static', filename='images/ifyoulikeit.gif') }}" alt="Logo" class="logo"></a>
+        <div id="logo-img">           
+            <a href="http://127.0.1:5000/"><img src="{{ url_for('static', filename='images/ifyoulikeit.gif') }}" alt="Logo" class="logo"></a>
         </div>
-          
-
+    </header>
     <!-- Content will go here -->
     
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
