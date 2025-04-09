@@ -1,0 +1,28 @@
+[
+    {
+      "id": "user-001",
+      "name": "John",
+      "preferences": ["books", "games"],
+      "liked_items": ["book-001", "game-001"]
+    },
+    {
+      "id": "user-002",
+      "name": "Alice",
+      "preferences": ["movies", "music"],
+      "liked_items": ["movie-001", "music-001"]
+    },
+    {
+      "id": "user-003",
+      "name": "Bob",
+      "preferences": ["books", "movies"],
+      "liked_items": ["book-001", "movie-001"]
+    },
+    {
+      "id": "user-004",
+      "name": "Charlie",
+      "preferences": ["games", "music"],
+      "liked_items": ["game-001", "music-001"]
+    }
+
+]
+

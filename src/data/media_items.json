@@ -1,0 +1,54 @@
+[
+    {
+    "id": "book-001",
+    "title": "The Dark Tower - Gunslinger",
+    "type": "book",
+    "creator": "Stephen King",
+    "year": 1982,
+    "description": "The story centers upon Roland Deschain, the last gunslinger, who has been chasing his adversary, 'the man in black,' for many years. The novel fuses Western fiction with fantasy, science fiction, and horror, following Roland's trek through a vast desert and beyond in search of the man in black. Roland meets several people along his journey, including a boy named Jake Chambers, who travels with him part of the way. ",
+    "image_url": "https://covers.openlibrary.org/b/id/14653760-L.jpg",
+    "genres": ["fantasy", "western", "horror", "science fiction"],
+    "themes": ["post-apocalyptic", "quest", "parallel worlds"],
+    "external_id": "OL81628W",
+    "external_url": "https://openlibrary.org/works/OL81628W/The_Gunslinger"
+    },
+    {
+    "id": "game-001",
+    "title": "Fallout: New Vegas",
+    "type": "game",
+    "creator": "Obsidian Entertainment",
+    "year": 2010,
+    "description": "Post-apocalyptic RPG set in a retrofuturistic Nevada.",
+    "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1u60.webp",
+    "genres": ["RPG", "action", "open-world"],
+    "themes": ["post-apocalyptic", "western", "retrofuturism"],
+    "external_id": "16",
+    "external_url": "https://www.igdb.com/games/fallout-new-vegas"
+    },
+    {
+    "id": "movie-001",
+    "title": "The Good, the Bad and the Ugly",
+    "type": "movie",
+    "creator": "Sergio Leone",
+    "year": 1966,
+    "description": "Set during the American Civil War, three gunslingers compete to find a fortune in buried gold.",
+    "image_url": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/bX2xnavhMYjWDoZp1VM6VnU1xwe.jpg",
+    "genres": ["western", "action"],
+    "themes": ["treasure hunt", "betrayal", "revenge"],
+    "external_id": "429",
+    "external_url": "https://www.themoviedb.org/movie/429-il-buono-il-brutto-il-cattivo?language=en-GB"  
+    },
+    {
+    "id": "music-001",
+    "title": "Deathwestern",
+    "type": "music",
+    "creator": "SpiritWorld",
+    "year": 2022,
+    "description": "A thrash metal album that combines elements of Western and horror themes, exploring the dark side of the Wild West.", 
+    "image_url": "https://i.scdn.co/image/ab67616d0000b2738263ca4e7d86c570c8fbf480", 
+    "genres": ["metal", "thrash", "hardcore"],
+    "themes": ["western", "horror", "death"],
+    "external_id": "2OLqIZlftkG4KRGqno7ScY",
+    "external_url": "https://open.spotify.com/album/2OLqIZlftkG4KRGqno7ScY"
+    }   
+  ]

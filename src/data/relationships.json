@@ -1,0 +1,27 @@
+[
+    {
+      "source_id": "book-001",
+      "target_id": "game-001",
+      "similarity_score": 75,
+      "relationship_type": "Gunslinger, Western, post-apocalyptic"
+    },
+    {
+        "source_id": "game-001",
+        "target_id": "movie-001",
+        "similarity_score": 90,
+        "relationship_type": "Gunslinger, Western, action, lost treasure"
+    },
+    {
+        "source_id": "movie-001",
+        "target_id": "music-001",
+        "similarity_score": 65,
+        "relationship_type": "Western, horror, death"
+    },
+    {
+        "source_id": "music-001",
+        "target_id": "book-001",
+        "similarity_score": 80,
+        "relationship_type": "Western, horror, post-apocalyptic"
+    }
+
+  ]

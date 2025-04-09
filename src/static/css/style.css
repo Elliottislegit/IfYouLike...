@@ -19,14 +19,67 @@ body {
   }
 
   h1 {
-    font-family: 'Raleway', sans-serif;
-    color: rgb(255, 255, 255);
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
     text-align: left;
     padding-left: 60px;
     padding-top: 30px;
+  }
+
+  h2 {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    text-align: center;
+
+    color: #00d9ff;
   }
 
   h4 {
     font-family: verdana;
     text-align: center;
   }
+
+
+#search-container #search-form {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+    color: rgb(218, 166, 166);
+    
+}
+
+#search-container .media-type-selector {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    gap: 20px;
+}
+
+#submit input[type="submit"] {
+  /* Your styles here */
+  background-color: #00d9ff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+}
+
+#submit input[type="submit"]:hover {
+  background-color: #00b3e6;
+}
