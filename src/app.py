@@ -60,8 +60,70 @@ def index():
 
 @app.route('/search', methods=['POST'])
 def search():
-    # Basic search functionality will go here
-    return jsonify({"status": "success"})
+    # Get the JSON data from the request
+    data = request.json
+    query = data.get('query', '')
+    media_type = data.get('type', '')
+    
+    # For now, return mock results (your sample data)
+    results = []
+    
+    for item in app_data['media_items']:
+        if item['type'] == media_type and query.lower() in item['title'].lower():
+            results.append(item)
+    
+    # Return the results as JSON
+    return jsonify({"results": results})
+
+@app.route('/get_recommendations', methods=['POST'])
+def get_recommendations():
+    # Get the selected item ID from the request
+    data = request.json
+    selected_id = data.get('item_id')
+    
+    # Find the selected item
+    selected_item = None
+    for item in app_data['media_items']:
+        if item['id'] == selected_id:
+            selected_item = item
+            break
+    
+    if not selected_item:
+        return jsonify({"error": "Item not found"}), 404
+    
+    # Find relationships for this item
+    recommendations = []
+    for relation in app_data['relationships']:
+        # If this item is the source, recommend the target
+        if relation['source_id'] == selected_id:
+            target_id = relation['target_id']
+            # Find the target item
+            for item in app_data['media_items']:
+                if item['id'] == target_id:
+                    # Add recommendation info
+                    recommendations.append({
+                        "item": item,
+                        "similarity_score": relation['similarity_score'],
+                        "relationship_type": relation['relationship_type']
+                    })
+        
+        # If this item is the target, recommend the source
+        elif relation['target_id'] == selected_id:
+            source_id = relation['source_id']
+            # Find the source item
+            for item in app_data['media_items']:
+                if item['id'] == source_id:
+                    # Add recommendation info
+                    recommendations.append({
+                        "item": item,
+                        "similarity_score": relation['similarity_score'],
+                        "relationship_type": relation['relationship_type']
+                    })
+    
+    return jsonify({
+        "selected_item": selected_item,
+        "recommendations": recommendations
+    })
 
 # Add function to save data back to files
 def save_data(filename, data):

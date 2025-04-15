@@ -4,9 +4,9 @@
     <title>If You Like...</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -42,12 +42,9 @@
                 <input type="submit" value="Submit">
                 </label>
             </div>
-
-            <div id="about">
-                <a href=""
-            </div>
-        
-         </form>
+        </form>
+        <div id="search-results"></div>
+        <p id="log"></p>
     </div>  
     
 </body> 
