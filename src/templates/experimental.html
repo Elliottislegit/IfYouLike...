@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>If You Like... | Find Your Next Favorite</title>
+    <title>If You Like... | Experimental Version</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/experimental.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/experimental.js') }}" defer></script>
 </head>
 <body>
     <header>
         <div id="logo-img">           
             <a href="/"><img src="{{ url_for('static', filename='images/ifyoulikeit.gif') }}" alt="If You Like It" class="logo"></a>
         </div>
+        <div class="experimental-badge">EXPERIMENTAL</div>
     </header>
 
     <div id="search-container">
         <h2>Find recommendations based on what you already love!</h2>
+        <h4><em>This version of the website is experimental and therefore prone to error.</em></h4>
         
         <form id="search-form">
             <input type="text" id="search-input" placeholder="Enter the name of music, a book, a game, or movie..." required>
@@ -48,7 +51,7 @@
         <div id="search-results"></div>
     </div>  
     
-    <a href="/experimental" class="experimental-button"><em>Experimental</em></a>
+    <a href="/" class="return-button">Return to Standard Version</a>
     
 </body> 
 </html>

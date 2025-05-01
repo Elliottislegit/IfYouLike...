@@ -2,17 +2,15 @@
 
 1. As a user with specific media interests, I want to find cross-media recommendations based on my favorite titles so that I can discover new content I'll likely enjoy.
 
-2. As a fan of specific genres, I want to find media from different categories (books, games, music) within that genre so that I can immerse myself completely in my preferred themes.
+2. As a fan of specific genres, I want to find media from other media categories within that genre so that I can immerse myself completely in my preferred themes.
 
 3. As an undecided user, I want to receive diverse recommendations based on my past likes so that I can discover new interests I might not have considered.
 
-4. As a user with limited time, I want to filter recommendations by media type so that I only see content types I'm currently interested in exploring.
+4. As a user with limited time, I want to be able to search recommendations by media type so that I only see content types I'm currently interested in exploring.
 
-5. As a returning user, I want the system to remember my preferences so that I can get improved recommendations over time.
+5. As a curious user, I want to see why certain items were recommended to me so that I understand the connection between my preferences and suggestions.
 
-6. As a curious user, I want to see why certain items were recommended to me so that I understand the connection between my preferences and suggestions.
-
-7. As a music enthusiast, I want to sample recommended music directly within the application so that I can quickly decide if I like it.
+6. As a developer myself, I want to be able to engage with upcoming versions and experimental editions of the site.
 
 
 
@@ -21,22 +19,22 @@
     
 
 ### User Experience
-FR1: The system shall allow users to enter their name which will be used in personalised recommendation messages.
-FR2: The system shall provide a search interface where users can find and select media items they enjoy.
-FR3: The system shall provide autocomplete functionality in the search box with visual previews of media.
-FR4: The system shall allow users to select multiple media items as the basis for recommendations.
+FR1: The system shall provide a clean search interface where users can find books and movies they enjoy.
+FR2: The system shall allow users to select between two media types: books and movies.
+FR3: The system shall display loading animations to provide feedback during API requests.
+FR4: The system shall include an "Experimental" version that uses upcoming recommendation algorithms.
 
 ### Recommendation Features
-FR5: The system shall generate cross-media recommendations based on user-selected items.
-FR6: The system shall display a similarity percentage between source items and recommendations.
-FR7: The system shall allow users to filter recommendations by media type (books, music, games, films).
-FR8: The system shall provide brief descriptions for each recommended item.
-FR9: The system shall display appropriate artwork for each recommended item (book covers, album art, game art).
+FR5: The system shall generate cross-media recommendations (books for movies, movies for books).
+FR6: The system shall display specific relationship information between recommended items (e.g., "Shared themes," "By the same author").
+FR7: The system shall allow users to navigate between recommendations by selecting any recommended item.
+FR8: The system shall provide descriptions for each recommended item when available.
+FR9: The system shall display appropriate artwork (book covers, movie posters) for each recommended item.
 
 ### Media Integration
-FR10: The system shall integrate with Spotify to provide sample playback for music recommendations.
-FR11: The system shall provide links to external sources for more information about recommended items.
-FR12: The system shall display appropriate metadata for each media type (author for books, developer for games, etc.).
+FR10: The system shall display appropriate metadata for each media type (author for books, director for movies).
+FR11: The system shall include year information for both books and movies when available.
+FR12: The system shall recommend items based on thematic connections and creator relationships.
 
 
 
@@ -44,22 +42,22 @@ FR12: The system shall display appropriate metadata for each media type (author 
 ## Non-Functional Requirements
 
 ### Performance
-NFR1: The system shall return recommendations within 3 seconds of user request.
-NFR2: The system shall support at least 100 concurrent users without degradation in performance.
+NFR1: The system shall use visual loading indicators to maintain user engagement during API requests.
+NFR2: The system shall implement caching to improve response times.
 
 ### Usability
-NFR3: The user interface shall be accessible on both desktop and mobile devices.
-NFR4: The system shall be usable by people with no prior knowledge of the application with minimal instruction.
-NFR5: The color scheme shall meet WCAG 2.1 AA contrast requirements for accessibility.
+NFR3: The user interface shall be responsive and functional on both desktop and mobile devices.
+NFR4: The system shall provide clear error messaging when required inputs are missing.
+NFR5: The system shall use a consistent color scheme and visual language throughout the application.
 
 ### Reliability
 NFR6: The system shall handle API failures gracefully, displaying appropriate error messages to users.
-NFR7: The system shall maintain 99% uptime during operational hours.
+NFR7: The system shall provide placeholder images when media artwork is unavailable.
 
 ### Security
-NFR8: The system shall store user data securely in compliance with data protection regulations.
-NFR9: API keys and secrets shall not be exposed in client-side code.
+NFR8: The system shall keep API keys server-side to prevent exposure in client-side code.
 
 ### Maintainability
-NFR10: The codebase shall follow PEP 8 style guide for Python code.
-NFR11: The system shall use appropriate design patterns to facilitate future extensions.
+NFR9: The system shall separate frontend and backend concerns with clear API endpoints.
+NFR10: The system shall implement an experimental version to facilitate testing of new features without disrupting the main application.
+NFR11: The system shall follow a modular design that separates data fetching, processing, and presentation.
