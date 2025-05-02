@@ -531,6 +531,12 @@ p {
   border: 1px solid rgba(255, 101, 132, 0.3);
 }
 
+.game-badge {
+  background-color: rgba(82, 200, 255, 0.2);
+  color: #52C8FF;
+  border: 1px solid rgba(82, 200, 255, 0.3);
+}
+
 .highlight-badge {
   animation: pulse 1.5s infinite;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);

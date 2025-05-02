@@ -1,16 +1,12 @@
 ## User Stories:
 
-1. As a user with specific media interests, I want to find cross-media recommendations based on my favorite titles so that I can discover new content I'll likely enjoy.
+1. As a user with specific media interests, I want to find cross-media recommendations based on my favourite titles so that I can discover new content I'll likely enjoy.
 
-2. As a fan of specific genres, I want to find media from other media categories within that genre so that I can immerse myself completely in my preferred themes.
+2. As an undecided user, I want to receive diverse recommendations based on my past likes so that I can discover new interests I might not have considered.
 
-3. As an undecided user, I want to receive diverse recommendations based on my past likes so that I can discover new interests I might not have considered.
+3. As a curious user, I want to see why certain items were recommended to me so that I understand the connection between my preferences and suggestions.
 
-4. As a user with limited time, I want to be able to search recommendations by media type so that I only see content types I'm currently interested in exploring.
-
-5. As a curious user, I want to see why certain items were recommended to me so that I understand the connection between my preferences and suggestions.
-
-6. As a developer myself, I want to be able to engage with upcoming versions and experimental editions of the site.
+4. As a developer myself, I want to be able to engage with upcoming versions and experimental editions of the site.
 
 
 

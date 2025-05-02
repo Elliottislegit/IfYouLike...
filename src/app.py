@@ -1,4 +1,5 @@
 import json
+from functools import wraps
 import os
 import requests
 from urllib.parse import quote_plus
@@ -18,6 +19,8 @@ load_dotenv(env_path)
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
 tmdb_key = os.getenv('TMDB_API_KEY')
+igdb_client_id = os.getenv('IGDB_CLIENT_ID')
+igdb_access_token = os.getenv('IGDB_CLIENT_SECRET')
 
 # ===== CACHING IMPLEMENTATION =====
 
@@ -151,6 +154,80 @@ CURATED_BOOKS = {
     }
 }
 
+CURATED_GAMES = {
+    'fallout': {
+        'title': 'Fallout',
+        'genres': ['rpg', 'post-apocalyptic', 'open world', 'sci-fi', 'action'],
+        'related_games': ['fallout new vegas', 'wasteland', 'metro exodus', 'outer worlds'],
+        'related_books': ['the road', 'metro 2033', 'a canticle for leibowitz', 'swan song'],
+        'related_movies': ['mad max', 'book of eli', 'i am legend', 'snowpiercer']
+    },
+    'the witcher': {
+        'title': 'The Witcher',
+        'genres': ['rpg', 'fantasy', 'open world', 'action', 'medieval'],
+        'related_games': ['dragon age', 'skyrim', 'kingdom come deliverance', 'gothic'],
+        'related_books': ['the witcher', 'the last wish', 'lord of the rings', 'game of thrones'],
+        'related_movies': ['the witcher', 'game of thrones', 'lord of the rings', 'the hexer']
+    },
+    'mass effect': {
+        'title': 'Mass Effect',
+        'genres': ['rpg', 'sci-fi', 'action', 'space', 'third-person shooter'],
+        'related_games': ['star wars knights of the old republic', 'dragon age', 'outer worlds', 'deus ex'],
+        'related_books': ['dune', 'hyperion', 'foundation', 'old mans war'],
+        'related_movies': ['star wars', 'guardians of the galaxy', 'star trek', 'the expanse']
+    },
+    'doom': {
+        'title': 'Doom',
+        'genres': ['fps', 'shooter', 'action', 'sci-fi', 'horror'],
+        'related_games': ['wolfenstein', 'quake', 'halo', 'half-life'],
+        'related_books': ['the doom that came to sarnath', 'metro 2033', 'blindsight', 'altered carbon'],
+        'related_movies': ['event horizon', 'aliens', 'doom', 'predator']
+    },
+    'minecraft': {
+        'title': 'Minecraft',
+        'genres': ['sandbox', 'survival', 'crafting', 'building', 'open world'],
+        'related_games': ['terraria', 'stardew valley', 'no mans sky', 'roblox'],
+        'related_books': ['ready player one', 'snow crash', 'diamond age', 'redwall'],
+        'related_movies': ['lego movie', 'wreck it ralph', 'ready player one', 'free guy']
+    },
+    'grand theft auto': {
+        'title': 'Grand Theft Auto',
+        'genres': ['open world', 'action', 'crime', 'sandbox', 'driving'],
+        'related_games': ['red dead redemption', 'saints row', 'sleeping dogs', 'watch dogs'],
+        'related_books': ['american psycho', 'heat', 'no country for old men', 'the power broker'],
+        'related_movies': ['heat', 'scarface', 'goodfellas', 'pulp fiction']
+    },
+    'dark souls': {
+        'title': 'Dark Souls',
+        'genres': ['action rpg', 'dark fantasy', 'difficult', 'medieval', 'souls-like'],
+        'related_games': ['bloodborne', 'sekiro', 'demons souls', 'elden ring'],
+        'related_books': ['berserk', 'malazan book of the fallen', 'name of the wind', 'black company'],
+        'related_movies': ['princess mononoke', 'pan\'s labyrinth', 'the seventh seal', 'excalibur']
+    },
+    'portal': {
+        'title': 'Portal',
+        'genres': ['puzzle', 'first-person', 'sci-fi', 'platformer'],
+        'related_games': ['half-life', 'the talos principle', 'quantum conundrum', 'superliminal'],
+        'related_books': ['hitchhiker\'s guide to the galaxy', 'we', 'ender\'s game', 'flatland'],
+        'related_movies': ['cube', 'ex machina', '2001 a space odyssey', 'the truman show']
+    },
+    'the last of us': {
+        'title': 'The Last of Us',
+        'genres': ['action', 'adventure', 'survival', 'post-apocalyptic', 'zombies'],
+        'related_games': ['days gone', 'resident evil', 'dying light', 'state of decay'],
+        'related_books': ['the road', 'i am legend', 'station eleven', 'world war z'],
+        'related_movies': ['i am legend', '28 days later', 'the road', 'children of men']
+    },
+    'assassins creed': {
+        'title': 'Assassin\'s Creed',
+        'genres': ['action', 'stealth', 'historical', 'open world', 'parkour'],
+        'related_games': ['ghost of tsushima', 'hitman', 'middle-earth', 'prince of persia'],
+        'related_books': ['the name of the rose', 'alamut', 'pillars of the earth', 'leonardo da vinci biography'],
+        'related_movies': ['kingdom of heaven', 'the last samurai', 'braveheart', 'gladiator']
+    }
+}
+
+
 # Define theme mapping for cross-media recommendations
 CROSS_MEDIA_MAPPING = {
     # Book subjects that map well to movie keywords
@@ -186,6 +263,33 @@ GENERIC_TERMS = [
     'movie', 'film', 'cinema', 'feature', 'award', 'bestseller', 'classic',
     'popular', 'famous', 'renowned', 'celebrated', 'acclaimed', 'published'
 ]
+
+GAME_CROSS_MEDIA_MAPPING = {
+    # Game genres that map to other media 
+    'rpg': ['fantasy', 'adventure', 'quest', 'magic'],
+    'action': ['action', 'adventure', 'thriller'],
+    'strategy': ['war', 'politics', 'historical'],
+    'adventure': ['adventure', 'exploration', 'mystery'],
+    'shooter': ['action', 'war', 'thriller', 'military'],
+    'puzzle': ['mystery', 'detective', 'intellectual'],
+    'platformer': ['adventure', 'fantasy'],
+    'simulation': ['realistic', 'slice of life'],
+    'sports': ['competition', 'teamwork'],
+    'racing': ['action', 'competition', 'speed'],
+    'horror': ['horror', 'suspense', 'thriller'],
+    'open world': ['adventure', 'exploration'],
+    'survival': ['suspense', 'post-apocalyptic', 'thriller']
+}
+
+# Add to HIGH_VALUE_THEMES
+GAME_HIGH_VALUE_THEMES = [
+    'post-apocalyptic', 'open world', 'rpg', 'fantasy', 'sci-fi', 
+    'cyberpunk', 'horror', 'stealth', 'roguelike', 'sandbox', 
+    'survival', 'strategy', 'shooter', 'adventure', 'action',
+    'puzzler', 'metroidvania', 'platformer', 'simulation'
+]
+
+HIGH_VALUE_THEMES.extend(GAME_HIGH_VALUE_THEMES)
 
 # ===== HELPER FUNCTIONS =====
 
@@ -249,6 +353,36 @@ def match_to_curated(title, description=''):
     if description:
         desc_lower = description.lower()
         for key, data in CURATED_BOOKS.items():
+            if key in desc_lower or data['title'].lower() in desc_lower:
+                return data
+    
+    return None
+
+def match_to_curated_game(title, description=''):
+    """Try to match a game to our curated database"""
+    title_lower = title.lower()
+    
+    # Direct title match
+    for key, data in CURATED_GAMES.items():
+        if key in title_lower or data['title'].lower() in title_lower:
+            return data
+    
+    # Fuzzy match - check if most of the title words match
+    title_words = set(title_lower.split())
+    for key, data in CURATED_GAMES.items():
+        key_words = set(key.split())
+        data_words = set(data['title'].lower().split())
+        
+        # Check overlap with key or title
+        if len(title_words & key_words) >= min(len(title_words), len(key_words)) / 2:
+            return data
+        if len(title_words & data_words) >= min(len(title_words), len(data_words)) / 2:
+            return data
+    
+    # Check description if available
+    if description:
+        desc_lower = description.lower()
+        for key, data in CURATED_GAMES.items():
             if key in desc_lower or data['title'].lower() in desc_lower:
                 return data
     
@@ -415,6 +549,7 @@ def fetch_book_details_from_google(book_id):
                 if keyword in desc_lower and keyword not in categories:
                     categories.append(keyword)
         
+
         # Check if we have curated data for this book
         curated_data = match_to_curated(title, desc)
         if curated_data and (not categories or len(categories) < 3):
@@ -543,6 +678,182 @@ def fetch_movie_details(mid):
         'genres': genres,
         'score_pct': score_pct
     }
+
+def get_igdb_token():
+    """Get or refresh IGDB API token from Twitch"""
+    global igdb_access_token
+    cache_key = 'igdb_token'
+    
+    with cache_lock:
+        cache_item = cache.get(cache_key)
+        if cache_item:
+            timestamp, token = cache_item
+            # Tokens are valid for 60 days, refresh after 50
+            if time.time() - timestamp < 50 * 24 * 3600:
+                return token
+    
+    # Need to get a new token
+    try:
+        client_id = os.getenv('IGDB_CLIENT_ID')
+        client_secret = os.getenv('IGDB_CLIENT_SECRET')
+        
+        # Print values for debugging
+        print(f"Client ID: {client_id}")
+        print(f"Client Secret: {client_secret}")
+        
+        # Use data parameter instead of params
+        response = requests.post(
+            'https://id.twitch.tv/oauth2/token',
+            data={
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'grant_type': 'client_credentials'
+            }
+        )
+        
+        response.raise_for_status()
+        token_data = response.json()
+        new_token = token_data.get('access_token')
+        
+        # Cache the new token
+        with cache_lock:
+            cache[cache_key] = (time.time(), new_token)
+        
+        return new_token
+    except Exception as e:
+        print(f"Error getting IGDB token: {str(e)}")
+        return igdb_access_token  # Return existing token as fallback
+    
+# Add this to the data fetching functions section
+@cached('game_details')
+def fetch_game_details(game_id):
+    """Fetch game details from IGDB API"""
+    try:
+        # Get the access token
+        token = get_igdb_token()
+        
+        # Prepare headers for the API request
+        headers = {
+            'Client-ID': os.getenv('IGDB_CLIENT_ID'),
+            'Authorization': f'Bearer {token}',
+            'Accept': 'application/json',
+}
+        
+        # First, get the game details
+        game_body = f'fields name,summary,cover.url,first_release_date,genres.name,involved_companies.company.name,involved_companies.developer,aggregated_rating; where id = {game_id};'
+        
+        game_response = requests.post('https://api.igdb.com/v4/games', 
+                             headers=headers,
+                             data=game_body)
+        
+        game_response.raise_for_status()
+        game_data = game_response.json()
+        
+        if not game_data:
+            return None
+            
+        game = game_data[0]
+        
+        # Get the title
+        title = game.get('name', 'Unknown')
+        
+        # Get the developer (main company or first developer)
+        creator = 'Unknown'
+        if game.get('involved_companies'):
+            for company in game.get('involved_companies'):
+                if company.get('developer', False):
+                    creator = company.get('company', {}).get('name', 'Unknown')
+                    break
+            if creator == 'Unknown' and game.get('involved_companies'):
+                creator = game.get('involved_companies')[0].get('company', {}).get('name', 'Unknown')
+        
+        # Get release year
+        year = 'Unknown'
+        if game.get('first_release_date'):
+            year = time.strftime('%Y', time.localtime(game.get('first_release_date')))
+        
+        # Get description
+        desc = game.get('summary', '')
+        if desc and len(desc) > 800:
+            desc = desc[:797] + '...'
+            
+        # Get cover image
+        img = ''
+        if game.get('cover', {}).get('url'):
+            img_url = game.get('cover', {}).get('url')
+            # Convert from thumbnail to full-size image
+            img = 'https:' + img_url.replace('t_thumb', 't_cover_big')
+        
+        # Get genres
+        genres = []
+        if game.get('genres'):
+            genres = [genre.get('name') for genre in game.get('genres')]
+        
+        # Get rating
+        score_pct = game.get('aggregated_rating', 0)
+        
+        # Get keywords (need a separate API call for this)
+        keywords_body = f'fields name; where game = {game_id};'
+        keywords_response = requests.post('https://api.igdb.com/v4/keywords', 
+                         headers=headers,
+                         data=keywords_body)
+        
+            
+        if keywords_response.status_code == 200:
+            try:
+                kw_data = keywords_response.json()
+                if kw_data:
+                    genres += [k.get('name').replace('_', ' ').title() for k in kw_data]
+            except:
+                # If keywords fail, continue with what we have
+                pass
+        
+        # Filter out generic terms
+        genres = filter_shared(genres)
+        
+        return {
+            'title': title,
+            'creator': creator,
+            'year': year,
+            'description': desc,
+            'image_url': img,
+            'genres': genres,
+            'score_pct': score_pct
+        }
+        
+    except Exception as e:
+        print(f"Error fetching game details from IGDB: {str(e)}")
+        return None
+
+# Add this function to the data fetching functions section
+@cached('api_request')
+def search_games(query, limit=10):
+    """Search for games in IGDB"""
+    try:
+        # Get the access token
+        token = get_igdb_token()
+        
+        # Prepare headers for the API request
+        headers = {
+            'Client-ID': os.getenv('IGDB_CLIENT_ID'),
+            'Authorization': f'Bearer {token}',
+            'Accept': 'application/json',
+}
+        
+        # Prepare the search query
+        # Search the games and ensure they have a cover image
+        body = f'search "{query}"; fields id,name,cover.url; where cover != null; limit {limit};'
+        
+        response = requests.post('https://api.igdb.com/v4/games', 
+                             headers=headers,
+                             data=body)
+        
+        response.raise_for_status()
+        return response.json()
+        
+    except Exception as e:
+        print(f"Error searching games in IGDB: {str(e)}")
+        return []
 
 # ===== ROUTES =====
 
@@ -1096,13 +1407,415 @@ def get_recommendations():
 
 @app.route('/experimental/search', methods=['POST'])
 def experimental_search():
-    """Placeholder for experimental search that might include games/music in the future"""
-    return search()
+    """Experimental search that includes games"""
+    try:
+        data = request.json
+        q = quote_plus(data.get('query', ''))
+        t = data.get('type')
+        results = []
+        
+        # If the type is 'game', use IGDB API
+        if t == 'game':
+            # Search for games in IGDB
+            games = search_games(data.get('query', ''), limit=14)
+            
+            if games:
+                for g in games:
+                    if not g.get('cover'):
+                        continue
+                    game_id = str(g['id'])
+                    det = fetch_game_details(game_id)
+                    if det:
+                        results.append({'id': f"game-{game_id}", **det, 'type': 'game'})
+        else:
+            # Use regular search for other media types
+            return search()
+        
+        return jsonify({'results': results})
+    
+    except Exception as e:
+        print(f"Experimental search error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/experimental/get_recommendations', methods=['POST'])
 def experimental_get_recommendations():
-    """Placeholder for experimental recommendations that might include games/music in the future"""
-    return get_recommendations()
+    """Experimental recommendations that include games"""
+    try:
+        data = request.json
+        sel_id = data.get('item_id')
+        pool = []
+        
+        # Game recommendations
+        if sel_id.startswith('game-'):
+            game_id = sel_id[5:]
+            sel = fetch_game_details(game_id)
+            
+            if not sel:
+                return jsonify({'error': 'Game not found'}), 404
+                
+            sel.update({'id': sel_id, 'type': 'game'})
+            
+            # PART 1: Developer recommendations (up to 2)
+            dev_count = 0
+            developer = sel['creator']
+            if developer != 'Unknown':
+                try:
+                    # Get the access token
+                    token = get_igdb_token()
+                    
+                    # Prepare headers for the API request
+                    headers = {
+                        'Client-ID': igdb_client_id,
+                        'Authorization': f'Bearer {token}',
+                        'Accept': 'application/json'
+                    }
+                    
+                    # Find company ID by name
+                    company_body = f'search "{developer}"; fields id,name; limit 1;'
+                    company_response = requests.post('https://api.igdb.com/v4/companies', 
+                                            headers=headers,
+                                            data=company_body)
+                    
+                    if company_response.status_code == 200:
+                        companies = company_response.json()
+                        if companies:
+                            company_id = companies[0].get('id')
+                            
+                            # Find games developed by this company
+                            games_body = f'fields game.id,game.name,game.cover.url; where company = {company_id} & developer = true; limit 5;'
+                            games_response = requests.post('https://api.igdb.com/v4/involved_companies', 
+                                                headers=headers,
+                                                data=games_body)
+                            
+                            if games_response.status_code == 200:
+                                games_data = games_response.json()
+                                for g in games_data:
+                                    if dev_count >= 2:
+                                        break
+                                        
+                                    game = g.get('game', {})
+                                    game_id_rec = str(game.get('id'))
+                                    
+                                    # Skip the current game
+                                    if game_id_rec == game_id:
+                                        continue
+                                        
+                                    # Skip games without cover
+                                    if not game.get('cover'):
+                                        continue
+                                        
+                                    det = fetch_game_details(game_id_rec)
+                                    if det:
+                                        pool.append({
+                                            'id': f"game-{game_id_rec}", 
+                                            'type': 'game', 
+                                            'source': f"Also by {developer}", 
+                                            'match_score': 85,
+                                            **det
+                                        })
+                                        dev_count += 1
+                except Exception as e:
+                    print(f"Error getting developer's games: {str(e)}")
+            
+            # PART 2: Similar games with shared genres (up to 3)
+            game_count = 0
+            game_genres = sel.get('genres', [])
+            
+            try:
+                # Get the access token
+                token = get_igdb_token()
+                
+                # Prepare headers for the API request
+                headers = {
+                    'Client-ID': igdb_client_id,
+                    'Authorization': f'Bearer {token}',
+                    'Accept': 'application/json'
+                }
+                
+                # Join genres with OR for the query
+                genre_query = ' | '.join([f'"{genre}"' for genre in game_genres[:3]])
+                
+                # Find similar games based on genres
+                if genre_query:
+                    similar_body = f'search {genre_query}; fields id,name,cover.url; where id != {game_id} & cover != null; limit 10;'
+                    similar_response = requests.post('https://api.igdb.com/v4/games', 
+                                        headers=headers,
+                                        data=similar_body)
+                    
+                    if similar_response.status_code == 200:
+                        similar_games = similar_response.json()
+                        for sg in similar_games:
+                            if game_count >= 3:
+                                break
+                                
+                            similar_id = str(sg.get('id'))
+                            similar_game_id = f"game-{similar_id}"
+                            
+                            # Skip games already in the pool
+                            if any(p.get('id') == similar_game_id for p in pool):
+                                continue
+                                
+                            det = fetch_game_details(similar_id)
+                            if det:
+                                # Check for shared genres
+                                shared = set(det.get('genres', [])) & set(game_genres)
+                                
+                                if len(shared) >= 1:
+                                    relationship = f"Shares genres: {', '.join(list(shared)[:3])}"
+                                    
+                                    pool.append({
+                                        'id': similar_game_id, 
+                                        'type': 'game', 
+                                        'source': relationship, 
+                                        'match_score': 75 + (len(shared) * 5),
+                                        **det
+                                    })
+                                    game_count += 1
+            except Exception as e:
+                print(f"Error getting similar games: {str(e)}")
+            
+            # PART 3: Cross-media game->book recommendations (at least 2)
+            book_count = 0
+            
+            # Create expanded themes set for better book matching
+            cross_media_themes = set()
+            
+            for genre in game_genres:
+                genre_lower = genre.lower()
+                # Add direct genre
+                cross_media_themes.add(genre_lower)
+                # Add mapped genres from game mapping
+                for game_genre, media_genres in GAME_CROSS_MEDIA_MAPPING.items():
+                    if game_genre in genre_lower:
+                        cross_media_themes.update(media_genres)
+            
+            # Try each theme to find good book matches
+            for theme in list(cross_media_themes)[:5]:
+                if book_count >= 2:
+                    break
+                    
+                try:
+                    # First try Google Books for better results
+                    gb_resp = make_request('https://www.googleapis.com/books/v1/volumes', params={
+                        'q': f'subject:"{theme}"',
+                        'maxResults': 5,
+                        'printType': 'books',
+                        'langRestrict': 'en'
+                    })
+                    
+                    if gb_resp and gb_resp.get('items'):
+                        for book in gb_resp.get('items', [])[:3]:
+                            if book_count >= 2:
+                                break
+                                
+                            book_id = book.get('id')
+                            if not book_id:
+                                continue
+                                
+                            # Skip if no image
+                            if not book.get('volumeInfo', {}).get('imageLinks', {}).get('thumbnail'):
+                                continue
+                                
+                            gb_book_id = f"book-{book_id}"
+                            
+                            # Skip books already in the pool
+                            if any(p.get('id') == gb_book_id for p in pool):
+                                continue
+                                
+                            det = fetch_book_details(book_id, 'google')
+                            if det:
+                                # Check for meaningful thematic overlap
+                                book_themes = set(g.lower() for g in det.get('genres', []))
+                                shared = book_themes & cross_media_themes
+                                
+                                if len(shared) >= 1:
+                                    relationship = f"Book with similar themes: {', '.join(list(shared)[:3])}"
+                                    
+                                    pool.append({
+                                        'id': gb_book_id, 
+                                        'type': 'book', 
+                                        'source': relationship, 
+                                        'match_score': 65 + (len(shared) * 5),
+                                        **det
+                                    })
+                                    book_count += 1
+                except Exception as e:
+                    print(f"Error getting cross-media book recommendations: {str(e)}")
+                    continue
+            
+            # PART 4: Cross-media game->movie recommendations (at least 2)
+            movie_count = 0
+            
+            # Try each theme to find good movie matches
+            for theme in list(cross_media_themes)[:5]:
+                if movie_count >= 2:
+                    break
+                    
+                try:
+                    resp = make_request(f'https://api.themoviedb.org/3/search/movie', params={
+                        'api_key': tmdb_key,
+                        'query': theme,
+                        'language': 'en-US',
+                        'page': 1
+                    })
+                    
+                    if resp and resp.get('results'):
+                        for m in resp.get('results', [])[:5]:
+                            if movie_count >= 2:
+                                break
+                                
+                            if not m.get('poster_path'):
+                                continue
+                                
+                            mid = str(m['id'])
+                            movie_id = f"movie-{mid}"
+                            
+                            # Skip movies already in the pool
+                            if any(p.get('id') == movie_id for p in pool):
+                                continue
+                                
+                            det = fetch_movie_details(mid)
+                            if det:
+                                # Check for meaningful thematic overlap
+                                movie_themes = set(g.lower() for g in det.get('genres', []))
+                                shared = movie_themes & cross_media_themes
+                                
+                                if len(shared) >= 1:
+                                    relationship = f"Film with similar themes: {', '.join(list(shared)[:3])}"
+                                    
+                                    pool.append({
+                                        'id': movie_id, 
+                                        'type': 'movie', 
+                                        'source': relationship, 
+                                        'match_score': 65 + (len(shared) * 5),
+                                        **det
+                                    })
+                                    movie_count += 1
+                except Exception as e:
+                    print(f"Error getting cross-media movie recommendations: {str(e)}")
+                    continue
+                
+        # Book and Movie recommendations (with added game cross-recommendations)
+        elif sel_id.startswith('book-') or sel_id.startswith('movie-'):
+            # Use the regular recommendation logic
+            response = get_recommendations()
+            
+            # Convert the JSON response to Python objects
+            response_data = json.loads(response.get_data(as_text=True))
+            
+            # Check if we have any errors
+            if response.status_code != 200 or 'error' in response_data:
+                return response
+                
+            # Extract the selected item and existing recommendations
+            sel = response_data.get('selected_item', {})
+            existing_recs = response_data.get('recommendations', [])
+            
+            # Add cross-media game recommendations
+            if len(existing_recs) > 0:
+                # Get up to 2 game recommendations based on the selected item
+                sel_genres = sel.get('genres', [])
+                cross_media_themes = set()
+                
+                for genre in sel_genres:
+                    genre_lower = genre.lower()
+                    # Add direct genre
+                    cross_media_themes.add(genre_lower)
+                    # Add mapped genres for cross-media recommendations
+                    if sel_id.startswith('book-'):
+                        for book_genre, media_genres in CROSS_MEDIA_MAPPING.items():
+                            if book_genre in genre_lower or any(mg in genre_lower for mg in media_genres):
+                                cross_media_themes.update([book_genre] + media_genres)
+                    else:  # movie
+                        for book_genre, media_genres in CROSS_MEDIA_MAPPING.items():
+                            if genre_lower in [mg.lower() for mg in media_genres] or genre_lower == book_genre.lower():
+                                cross_media_themes.add(book_genre)
+                
+                # Map to game themes
+                game_themes = set()
+                for theme in cross_media_themes:
+                    for game_genre, media_genres in GAME_CROSS_MEDIA_MAPPING.items():
+                        if theme in media_genres or theme == game_genre:
+                            game_themes.add(game_genre)
+                
+                # Try to find games matching these themes
+                game_count = 0
+                
+                try:
+                    # Get the access token
+                    token = get_igdb_token()
+                    
+                    # Prepare headers for the API request
+                    headers = {
+                        'Client-ID': igdb_client_id,
+                        'Authorization': f'Bearer {token}',
+                        'Accept': 'application/json'
+                    }
+                    
+                    # Join game themes with OR for the query
+                    theme_query = ' | '.join([f'"{theme}"' for theme in list(game_themes)[:3]])
+                    
+                    # Find similar games based on themes
+                    if theme_query:
+                        games_body = f'search {theme_query}; fields id,name,cover.url; where cover != null; limit 10;'
+                        games_response = requests.post('https://api.igdb.com/v4/games', 
+                                            headers=headers,
+                                            data=games_body)
+                        
+                        if games_response.status_code == 200:
+                            matching_games = games_response.json()
+                            for g in matching_games:
+                                if game_count >= 2:
+                                    break
+                                    
+                                game_id = str(g.get('id'))
+                                game_det = fetch_game_details(game_id)
+                                
+                                if game_det:
+                                    # Check for meaningful thematic overlap
+                                    game_genres = set(g.lower() for g in game_det.get('genres', []))
+                                    common_themes = game_genres & game_themes
+                                    
+                                    if common_themes:
+                                        relationship = f"Game with similar themes: {', '.join(list(common_themes)[:3])}"
+                                        
+                                        # Add this game to the recommendations
+                                        existing_recs.append({
+                                            'item': {
+                                                'id': f"game-{game_id}",
+                                                'type': 'game',
+                                                **game_det
+                                            },
+                                            'relationship_type': relationship
+                                        })
+                                        game_count += 1
+                except Exception as e:
+                    print(f"Error getting cross-media game recommendations: {str(e)}")
+            
+            # Return the enhanced recommendations
+            return jsonify({'selected_item': sel, 'recommendations': existing_recs})
+            
+        # If it's a game and we've built a pool of recommendations
+        if sel_id.startswith('game-') and pool:
+            # Sort by match score (highest first)
+            pool.sort(key=lambda x: x.get('match_score', 0), reverse=True)
+            
+            # Format recommendations for response (take top 6)
+            recs = []
+            for it in pool[:6]:
+                # Remove match_score and source from the item details
+                item_copy = {k: v for k, v in it.items() if k != 'match_score' and k != 'source'}
+                # Add relationship type from source
+                recs.append({'item': item_copy, 'relationship_type': it.get('source', 'Similar item')})
+            
+            return jsonify({'selected_item': sel, 'recommendations': recs})
+        
+        # If we get here, use the regular recommendation logic
+        return get_recommendations()
+        
+    except Exception as e:
+        print(f"Experimental recommendation error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 # Route to handle placeholder image requests
 @app.route('/static/images/placeholder.png', methods=['GET'])

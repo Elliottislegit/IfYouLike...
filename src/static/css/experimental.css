@@ -2,9 +2,103 @@
 
 /* Change the primary color to distinguish from main site */
 :root {
-    --primary: #8C52FF;
-    --secondary: #FF5287;
-  }
+  --primary: #8C52FF;
+  --secondary: #FF5287;
+  --tertiary: #52C8FF;  /* Added new color for games */
+}
+
+/* Return button styling */
+.return-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--secondary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(255, 82, 135, 0.4);
+  transition: all 0.3s ease;
+  z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+h4 {
+      margin: auto;
+      width: 50%;
+      padding-bottom: 10px;
+}
+
+.return-button:hover {
+  background-color: #E84777;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 82, 135, 0.5);
+}
+
+.return-button:active {
+  transform: translateY(0);
+}
+
+/* Experimental badge in header */
+.experimental-badge {
+  background-color: var(--secondary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-right: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+/* Subtle changes to show it's experimental */
+#search-form {
+  background-color: rgba(140, 82, 255, 0.1);
+  border: 1px solid rgba(140, 82, 255, 0.3);
+}
+
+.media-type-selector input[type="radio"]:checked + span {
+  background-color: var(--primary);
+}
+
+#submit button {
+  background-color: var(--primary);
+}
+
+#submit button:hover {
+  background-color: #7845E0;
+}
+
+.result-card:hover {
+  border-color: rgba(140, 82, 255, 0.3);
+}
+
+.selected-item {
+  background-color: rgba(140, 82, 255, 0.1);
+  border: 1px solid rgba(140, 82, 255, 0.2);
+}
+
+.book-badge {
+  background-color: rgba(140, 82, 255, 0.2);
+  color: var(--primary);
+  border: 1px solid rgba(140, 82, 255, 0.3);
+}
+
+/* Game badge styling */
+.game-badge {
+  background-color: rgba(82, 200, 255, 0.2);
+  color: var(--tertiary);
+  border: 1px solid rgba(82, 200, 255, 0.3);
+}
   
   /* Return button styling */
   .return-button {
